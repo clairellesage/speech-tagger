@@ -1,3 +1,6 @@
 *~
 *.pyc
 *.npy
+server/
+notes.txt
+temp-python/

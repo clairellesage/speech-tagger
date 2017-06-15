@@ -166,8 +166,10 @@ def readSegmentGT(gtFile):
 
 def plotSegmentationResults(flagsInd, flagsIndGT, classNames, mtStep, ONLY_EVALUATE=False):
     '''
-    This function plots statistics on the classification-segmentation results produced either by the fix-sized supervised method or the HMM method.
-    It also computes the overall accuracy achieved by the respective method if ground-truth is available.
+    This function plots statistics on the classification-segmentation results produced 
+    either by the fix-sized supervised method or the HMM method.
+    It also computes the overall accuracy achieved by the respective method 
+    if ground-truth is available.
     '''    
     flags = [classNames[int(f)] for f in flagsInd]
     (segs, classes) = flags2segs(flags, mtStep)    
@@ -721,7 +723,7 @@ def speakerDiarization(fileName, numOfSpeakers, mtSize=2.0, mtStep=0.2, stWin=0.
     #iFeaturesSelect = [8,9,10,11,12,13,14,15,16,17,18,19,20];                                                                                         # SET 0A
     #iFeaturesSelect = [8,9,10,11,12,13,14,15,16,17,18,19,20, 99,100];                                                                                 # SET 0B
     #iFeaturesSelect = [8,9,10,11,12,13,14,15,16,17,18,19,20, 68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,
-    #   97,98, 99,100];     # SET 0C
+    #   97,98, 99,100];     # SET 
 
     iFeaturesSelect = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]                           # SET 1A
     #iFeaturesSelect = [8,9,10,11,12,13,14,15,16,17,18,19,20,41,42,43,44,45,46,47,48,49,50,51,52,53, 99,100];                                          # SET 1B
@@ -828,7 +830,7 @@ def speakerDiarization(fileName, numOfSpeakers, mtSize=2.0, mtStep=0.2, stWin=0.
         clsAll.append(cls)
         centersAll.append(means)
         silA = []; silB = []
-        for c in range(iSpeakers):                                # for each speaker (i.e. for each extracted cluster)
+        for c in range(iSpeakers):         # for each speaker (i.e. for each extracted cluster)
             clusterPerCent = numpy.nonzero(cls==c)[0].shape[0] / float(len(cls))
             if clusterPerCent < 0.020:
                 silA.append(0.0)
@@ -915,8 +917,10 @@ def speakerDiarization(fileName, numOfSpeakers, mtSize=2.0, mtStep=0.2, stWin=0.
             plt.xlabel("number of clusters");
             plt.ylabel("average clustering's sillouette");
         plt.show()
-    return cls
-    
+
+    clsArr = cls
+    return clsArr, len(clsArr)
+
 def speakerDiarizationEvaluateScript(folderName, LDAs):
     '''
         This function prints the cluster purity and speaker purity for each WAV file stored in a provided directory (.SEGMENT files are needed as ground-truth)
@@ -936,7 +940,7 @@ def speakerDiarizationEvaluateScript(folderName, LDAs):
     for wavFile in wavFilesList:        
         gtFile = wavFile.replace('.wav', '.segments');
         if os.path.isfile(gtFile):
-            [segStart, segEnd, segLabels] = readSegmentGT(gtFile)                            # read GT data
+            [segStart, segEnd, segLabels] = readSegmentGT(gtFile)         # read GT data
             N.append(len(list(set(segLabels))))
         else:
             N.append(-1)

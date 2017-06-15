@@ -48,4 +48,4 @@ def insertIntoDB(filename, number_of_speakers, duration, speaker_arr):
     if con:
       con.close()
 
-formatSDarr(runSD(filename))
+formatSDarr(runSD(filename))  

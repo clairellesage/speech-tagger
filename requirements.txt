@@ -1,7 +1,10 @@
 cycler==0.10.0
+dj-database-url==0.4.2
+Django==1.10.7
 eyeD3==0.8
 functools32==3.2.3.post2
 hmmlearn==0.2.0
+manage.py==0.2.10
 matplotlib==2.0.2
 numpy==1.9.2
 pathlib==1.0.1
@@ -17,4 +20,3 @@ six==1.10.0
 sklearn==0.0
 subprocess32==3.2.7
 virtualenv==15.1.0
-	

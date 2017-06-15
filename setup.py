@@ -12,7 +12,7 @@ try:
 		cur.execute("CREATE TABLE Audio_files(File_id BIGSERIAL PRIMARY KEY, Name TEXT, Number_of_speakers INT, Duration DECIMAL)")
 
 		cur.execute("DROP TABLE IF EXISTS Segments CASCADE")
-		cur.execute("CREATE TABLE Segments(Segment_time INT PRIMARY KEY, File_id INT REFERENCES Audio_files(File_id), Speaker_id INT)")
+		cur.execute("CREATE TABLE Segments(Segment_id BIGSERIAL PRIMARY KEY, Segment_time INT, File_id INT REFERENCES Audio_files(File_id), Speaker_id INT)")
 
 		con.commit()
 

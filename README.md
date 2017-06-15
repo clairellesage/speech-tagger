@@ -4,7 +4,7 @@ This prototype uses the pyAudioAnalysis library to perform speaker diarization t
 ## Installation
  * Install dependencies:
  ```
-pip install numpy matplotlib scipy sklearn hmmlearn simplejson eyed3 pydub
+pip install numpy matplotlib scipy sklearn hmmlearn simplejson eyed3 pydub psycopg2
 ```
  * Set up the database:
 ```

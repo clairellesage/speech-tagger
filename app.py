@@ -2,8 +2,11 @@ import sys
 from audioSegmentation import speakerDiarization as sD
 import psycopg2
 import os
-import urlparse
-import subprocess
+try:
+    from urllib.parse import urlparse2
+except ImportError:
+    from urlparse2 import urlparse2
+import murl
 
 filename = sys.argv[1]
 
@@ -33,35 +36,34 @@ def insertIntoDB(filename, number_of_speakers, duration, speaker_arr):
 
   try:
 
-    proc = subprocess.Popen('heroku config:get DATABASE_URL -a my-heroku-app', stdout=subprocess.PIPE, shell=True)
-    db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
+    # urlparse2.uses_netloc.append("postgres")
+    # url = urlparse2.urlparse(os.environ["postgres://rdfbcmaswxjcko:0a3874c4cf059d20bfc7abcd6768f33bdd8669cdd884239543dd29db405c9001@ec2-50-19-83-146.compute-1.amazonaws.com:5432/d13pa0qbkldmjt"])
+#     url = murl.Url('postgres://rdfbcmaswxjcko:0a3874c4cf059d20bfc7abcd6768f33bdd8669cdd884239543dd29db405c9001@ec2-50-19-83-146.compute-1.amazonaws.com:5432/d13pa0qbkldmjt')
+#     print url
 
-    conn = psycopg2.connect(db_url)
+# postgres://user:pass@host.com:5432/path?k=v#f
 
-      # urlparse.uses_netloc.append("postgres")
-      # url = urlparse.urlparse(os.environ["DATABASE_URL"])
+    con = psycopg2.connect(
+        dbname='postgres',
+        user='rdfbcmaswxjcko',
+        password='0a3874c4cf059d20bfc7abcd6768f33bdd8669cdd884239543dd29db405c9001',
+        host='ec2-50-19-83-146.compute-1.amazonaws.com',
+        port=5432
+    )
 
-      # con = psycopg2.connect(
-      #     database=url.path[1:],
-      #     user=url.username,
-      #     password=url.password,
-      #     host=url.hostname,
-      #     port=url.port
-      # )
+    # con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
+    cur = con.cursor()
 
-      # con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
-      cur = con.cursor()
+    cur.execute("INSERT INTO Audio_files(Name, Number_of_speakers, Duration) VALUES (%s, %s, %s) RETURNING File_id",\
+      (filename, number_of_speakers, duration))
+    speaker_id = cur.fetchone()[0]
 
-      cur.execute("INSERT INTO Audio_files(Name, Number_of_speakers, Duration) VALUES (%s, %s, %s) RETURNING File_id",\
-        (filename, number_of_speakers, duration))
-      speaker_id = cur.fetchone()[0]
+    for index, item in enumerate(speaker_arr, 1):
+      cur.execute("INSERT INTO Segments(Segment_time, File_id, Speaker_id) VALUES (%s, %s, %s)",\
+      (index, speaker_id, item))
 
-      for index, item in enumerate(speaker_arr, 1):
-        cur.execute("INSERT INTO Segments(Segment_time, File_id, Speaker_id) VALUES (%s, %s, %s)",\
-        (index, speaker_id, item))
-
-      con.commit()
-      print "\nSpeaker diariziation for", filename, "successfully inserted into database."
+    con.commit()
+    print "\nSpeaker diariziation for", filename, "successfully inserted into database."
 
   except psycopg2.DatabaseError, e:
 

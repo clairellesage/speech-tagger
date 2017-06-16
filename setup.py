@@ -3,22 +3,21 @@ import psycopg2
 import os
 import urlparse
 
-# urlparse.uses_netloc.append("postgres")
-# url = urlparse.urlparse(os.environ["DATABASE_URL"])
-
-# con = psycopg2.connect(
-#     database=url.path[1:],
-#     user=url.username,
-#     password=url.password,
-#     host=url.hostname,
-#     port=url.port
-# )
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 con = None
 
 try:
 		# move these params into config file 
-		con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
+		# con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
+		con = psycopg2.connect(
+		    database=url.path[1:],
+		    user=url.username,
+		    password=url.password,
+		    host=url.hostname,
+		    port=url.port
+		)
 		cur = con.cursor()
 
 		cur.execute("DROP TABLE IF EXISTS Audio_files CASCADE")

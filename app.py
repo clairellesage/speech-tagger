@@ -44,7 +44,7 @@ def insertIntoDB(filename, number_of_speakers, duration, speaker_arr):
 # postgres://user:pass@host.com:5432/path?k=v#f
 
     con = psycopg2.connect(
-        dbname='postgres',
+        dbname='d13pa0qbkldmjt',
         user='rdfbcmaswxjcko',
         password='0a3874c4cf059d20bfc7abcd6768f33bdd8669cdd884239543dd29db405c9001',
         host='ec2-50-19-83-146.compute-1.amazonaws.com',

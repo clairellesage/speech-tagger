@@ -1,5 +1,18 @@
 import sys
 import psycopg2
+import os
+import urlparse
+
+# urlparse.uses_netloc.append("postgres")
+# url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+# con = psycopg2.connect(
+#     database=url.path[1:],
+#     user=url.username,
+#     password=url.password,
+#     host=url.hostname,
+#     port=url.port
+# )
 
 con = None
 
@@ -26,5 +39,3 @@ finally:
 	if con:
 		con.close()
 
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()

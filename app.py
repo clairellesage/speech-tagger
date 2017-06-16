@@ -1,6 +1,9 @@
 import sys
 from audioSegmentation import speakerDiarization as sD
 import psycopg2
+import os
+import urlparse
+import subprocess
 
 filename = sys.argv[1]
 
@@ -21,11 +24,32 @@ def formatSDarr(arr):
 
 def insertIntoDB(filename, number_of_speakers, duration, speaker_arr):
 
+  print "\nFile:", filename
+  print "Number of speakers:", number_of_speakers
+  print "Duration:", duration, "seconds"
+  print "Speaker array =", speaker_arr
+
   con = None
 
   try:
-      # move these params into config file 
-      con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
+
+    proc = subprocess.Popen('heroku config:get DATABASE_URL -a my-heroku-app', stdout=subprocess.PIPE, shell=True)
+    db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
+
+    conn = psycopg2.connect(db_url)
+
+      # urlparse.uses_netloc.append("postgres")
+      # url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+      # con = psycopg2.connect(
+      #     database=url.path[1:],
+      #     user=url.username,
+      #     password=url.password,
+      #     host=url.hostname,
+      #     port=url.port
+      # )
+
+      # con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
       cur = con.cursor()
 
       cur.execute("INSERT INTO Audio_files(Name, Number_of_speakers, Duration) VALUES (%s, %s, %s) RETURNING File_id",\
@@ -37,6 +61,7 @@ def insertIntoDB(filename, number_of_speakers, duration, speaker_arr):
         (index, speaker_id, item))
 
       con.commit()
+      print "\nSpeaker diariziation for", filename, "successfully inserted into database."
 
   except psycopg2.DatabaseError, e:
 

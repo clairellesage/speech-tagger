@@ -1,5 +1,5 @@
 numpy==1.9.1
-scipy==0.15.1
+scipy==0.14.0
 cycler==0.10.0
 Django==1.10.7
 eyeD3==0.8

@@ -11,13 +11,14 @@ con = None
 try:
 		# move these params into config file 
 		# con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
-		con = psycopg2.connect(
-		    database=url.path[1:],
-		    user=url.username,
-		    password=url.password,
-		    host=url.hostname,
-		    port=url.port
-		)
+    con = psycopg2.connect(
+        dbname='d13pa0qbkldmjt',
+        user='rdfbcmaswxjcko',
+        password='0a3874c4cf059d20bfc7abcd6768f33bdd8669cdd884239543dd29db405c9001',
+        host='ec2-50-19-83-146.compute-1.amazonaws.com',
+        port=5432
+    )
+    
 		cur = con.cursor()
 
 		cur.execute("DROP TABLE IF EXISTS Audio_files CASCADE")

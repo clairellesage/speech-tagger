@@ -1,10 +1,6 @@
 import sys
 import psycopg2
-import os
-import urlparse
 
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 con = None
 
@@ -18,7 +14,7 @@ try:
         host='ec2-50-19-83-146.compute-1.amazonaws.com',
         port=5432
     )
-    
+
 		cur = con.cursor()
 
 		cur.execute("DROP TABLE IF EXISTS Audio_files CASCADE")

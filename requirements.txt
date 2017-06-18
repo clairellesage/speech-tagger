@@ -1,6 +1,6 @@
 numpy==1.9.1
 scipy==0.14.0
-scikit-learn==0.16.1
+scikit-learn==0.15.2
 cycler==0.10.0
 Django==1.10.7
 eyeD3==0.8

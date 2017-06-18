@@ -4,7 +4,7 @@ functools32==3.2.3.post2
 hmmlearn==0.2.0
 matplotlib==2.0.2
 murl==0.5.1
-numpy==1.9.1
+numpy==1.8.1
 pathlib==1.0.1
 pkg-resources==0.0.0
 psycopg2==2.7.1

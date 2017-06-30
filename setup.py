@@ -1,13 +1,11 @@
 import sys
 import psycopg2
 
-
 con = None
 
 try:
 		# move these params into config file 
-		# con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
-    con = psycopg2.connect(
+		con = psycopg2.connect(
         dbname='d13pa0qbkldmjt',
         user='rdfbcmaswxjcko',
         password='0a3874c4cf059d20bfc7abcd6768f33bdd8669cdd884239543dd29db405c9001',
@@ -21,7 +19,7 @@ try:
 		cur.execute("CREATE TABLE Audio_files(File_id BIGSERIAL PRIMARY KEY, Name TEXT, Number_of_speakers INT, Duration DECIMAL)")
 
 		cur.execute("DROP TABLE IF EXISTS Segments CASCADE")
-		cur.execute("CREATE TABLE Segments(Segment_id BIGSERIAL PRIMARY KEY, Segment_time INT, File_id INT REFERENCES Audio_files(File_id), Speaker_id INT)")
+		cur.execute("CREATE TABLE Segments(Segment_id BIGSERIAL PRIMARY KEY, File_id INT REFERENCES Audio_files(File_id), Segment_time INT, Speaker_id INT)")
 
 		con.commit()
 

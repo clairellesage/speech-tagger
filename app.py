@@ -1,7 +1,7 @@
 import sys
 from audioSegmentation import speakerDiarization as sD
 import psycopg2
-from psycopg2.extensions import adapt, register_adapter, AsIs
+from io import StringIO
 
 filename = sys.argv[1]
 
@@ -18,7 +18,6 @@ def insertIntoDB(filename, arr):
   print "\nFile:", filename
   print "Number of speakers:", number_of_speakers
   print "Duration:", duration, "seconds"
-  # print "Speaker array =", speaker_arr
 
   con = None
 
@@ -32,8 +31,7 @@ def insertIntoDB(filename, arr):
         host='ec2-50-19-83-146.compute-1.amazonaws.com',
         port=5432
     )
-
-    # con = psycopg2.connect("dbname='speechtag' user='josh' host='localhost' password='lighthouse123'")  
+    
     cur = con.cursor()
 
     cur.execute("INSERT INTO Audio_files(Name, Number_of_speakers, Duration) VALUES (%s, %s, %s) RETURNING File_id",\
@@ -44,49 +42,43 @@ def insertIntoDB(filename, arr):
     print "File id: ", file_id
 
     # creates array of triples for segments table
-    speaker_arr = [(int(file_id), segment_time, speaker_id) for segment_time, speaker_id in enumerate(arr)]
+    speaker_arr = [[int(file_id), segment_time, speaker_id] for segment_time, speaker_id in enumerate(arr)]
     print "Speaker array: ", speaker_arr
 
-    class Point(object):
-        def __init__(self, x, y, z):
-            self.x = x
-            self.y = y
-            self.z = z
+    f = open('speaker_arr.py', 'r')
+    # f.write(unicode(str(speaker_arr)))
+    v = f.read()
 
-    def adapt_point(point):
-        x = adapt(point.x).getquoted()
-        y = adapt(point.y).getquoted()
-        z = adapt(point.z).getquoted()
-        return AsIs("'(%s, %s, %s)'" % (x, y, z))
+    # prints 
+    # <_io.StringIO object at 0x7fda8d5e4e50>
+    # [[10, 0, 3], [10, 1, 3], [10, 2, 3], [10, 3, 3], [10, 4, 3], [10, 5, 3], [10, 6, 3], [10, 7, 3], [10, 8, 3], [10, 9, 3], [10, 10, 0], [10, 11, 0], [10, 12, 0], [10, 13, 0], [10, 14, 0], [10, 15, 0], [10, 16, 0], [10, 17, 0], [10, 18, 0], [10, 19, 0], [10, 20, 1], [10, 21, 1], [10, 22, 1], [10, 23, 1], [10, 24, 1], [10, 25, 1], [10, 26, 1], [10, 27, 1], [10, 28, 2], [10, 29, 2], [10, 30, 2], [10, 31, 2], [10, 32, 2], [10, 33, 2], [10, 34, 2], [10, 35, 2], [10, 36, 2], [10, 37, 2], [10, 38, 2], [10, 39, 2], [10, 40, 4], [10, 41, 4]]  
 
-    register_adapter(Point, adapt_point)
+# file_id', 'segment_time', 
+    # try:
+    #   cur.copy_from(v, 'Segments', columns=('speaker_id'), sep=",")
+    #   cur.execute("select * from Segments;")
+    #   print "Segments table:", cur.fetchall()
+    #   # prints []
 
-    my_point_list = [Point(p[0], p[1], p[2]) for p in speaker_arr]
+    import numpy
+    a = numpy.asarray(speaker_arr)
+    numpy.savetxt("speaker_arr.csv", a, delimiter="\t", fmt='%1.0f')
 
-    # insert = "insert into Segments values (%s, %s, %s)"
-    # cur.executemany(insert, (speaker_arr),)
+    o = open('speaker_arr.csv', 'r')
+    print o
 
-    # insert = """
-    #     insert into Segments values (File_id, Segment_time, Speaker_id)
-    #     select File_id, Segment_time, Speaker_id
-    #     from unnest(%s) s(File_id int, Segment_time int, Speaker_id int)
-    #     returning File_id
-    # ;"""
+    try: 
+      cur.copy_from(o, 'Segments', columns=('file_id', 'segment_time', 'speaker_id'), sep='\t')
+      cur.execute("select * from Segments;")
+      print cur.fetchall()
+      print "\nSpeaker diariziation for", filename, "successfully inserted into database."
+    except psycopg2.DatabaseError, e: 
+      print e, "didn't copy"
 
-    # cur.execute(insert, (speaker_arr,))
 
 
-    insert = "insert into Segments values (%s, %s, %s)"
-    cur.execute(insert, (speaker_arr),)
-    
-    # cur.execute("INSERT INTO Segments (p) VALUES (%s)",
-    #              (Point(1.23, 4.56),))
 
-    # args_str = ','.join(cur.mogrify("(%s,%s,%s)", (my_point_list),))
-    # cur.execute("INSERT INTO Segments VALUES " + args_str)
     con.commit()
-
-    print "\nSpeaker diariziation for", filename, "successfully inserted into database."
 
   except psycopg2.DatabaseError, e:
 
@@ -99,20 +91,3 @@ def insertIntoDB(filename, arr):
       con.close()
 
 runSD(filename)
-
-
-    # # Clearly slow to insert one row at a time
-    # for row in speaker_arr:
-    #     cur.execute('insert into Segments values (%s,%s)', row)
-     
-    # # Should be much faster, but isn't
-    # cur.executemany('insert into data values (%s,%s,%s)', myData)
-     
-    # # This hack is much faster
-    # dataText = ','.join(cur.mogrify('(%s,%s)', row) for row in speaker_arr)
-    # cur.execute('insert into Segments values ' + dataText)
-
-
-    # for index, item in enumerate(speaker_arr, 1):
-    #   cur.execute("INSERT INTO Segments(Segment_time, File_id, Speaker_id) VALUES (%s, %s, %s)",\
-    #   (index, speaker_id, item))

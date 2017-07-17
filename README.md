@@ -6,7 +6,7 @@ This prototype uses the pyAudioAnalysis library to perform speaker diarization t
  ```
 pip install numpy matplotlib scipy sklearn hmmlearn simplejson eyed3 pydub psycopg2
 ```
- * Set up the database:
+ * (Re)set the database:
 ```
 python setup.py
 ```
@@ -14,4 +14,9 @@ python setup.py
  * Run the program with your audio file :
 ```
 python app.py {filename}
+```
+
+ * Run the program on heroku :
+```
+heroku run worker {filename}
 ```

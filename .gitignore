@@ -6,3 +6,6 @@ notes.txt
 temp-python/
 .env
 venv/
+data/
+speaker_arr.csv
+splitfile.py
